@@ -42,6 +42,18 @@ static inline bool is_object_of_type(JSContextRef ctx, JSValueRef value, jsc::St
 }
 
 template<>
+inline const char *jsc::Value::typeof(JSContextRef ctx, const JSValueRef &value) {
+    switch (JSValueGetType(ctx, value)) {
+        case kJSTypeNull: return "null";
+        case kJSTypeNumber: return "number";
+        case kJSTypeObject: return "object";
+        case kJSTypeString: return "string";
+        case kJSTypeBoolean: return "boolean";
+        case kJSTypeUndefined: return "undefined";
+    }
+}
+
+template<>
 inline bool jsc::Value::is_array(JSContextRef ctx, const JSValueRef &value) {
     // JSValueIsArray() is not available until iOS 9.
     static const jsc::String type = "Array";
@@ -124,7 +136,7 @@ inline JSValueRef jsc::Value::from_number(JSContextRef ctx, double number) {
 }
 
 template<>
-inline JSValueRef jsc::Value::from_string(JSContextRef ctx, const jsc::String &string) {
+inline JSValueRef jsc::Value::from_nonnull_string(JSContextRef ctx, const jsc::String &string) {
     return JSValueMakeString(ctx, string);
 }
 
@@ -134,7 +146,7 @@ inline JSValueRef jsc::Value::from_undefined(JSContextRef ctx) {
 }
 
 template<>
-JSValueRef jsc::Value::from_binary(JSContextRef ctx, BinaryData data);
+JSValueRef jsc::Value::from_nonnull_binary(JSContextRef ctx, BinaryData data);
 
 template<>
 inline bool jsc::Value::to_boolean(JSContextRef ctx, const JSValueRef &value) {
